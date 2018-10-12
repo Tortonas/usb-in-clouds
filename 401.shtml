@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>401 Unauthorized</title>
+<link rel="icon" href="favicon.png" type="image/png" sizes="16x16">
+</head>
+
+<body background="background.png">
+<center>
+
+ <font size="18" color="red"> 401 Unauthorized	</font>
+
+ 
+ </center>
+</body>
+</html>

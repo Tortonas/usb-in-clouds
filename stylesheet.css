@@ -1,0 +1,58 @@
+@import "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
+body {
+	background-color:powderblue;
+    text-align:center;
+    background: url(background.png) no-repeat;
+    background-size: cover;
+    background-repeat:   repeat;
+}
+#loginform {
+	width: 280px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: white;
+}
+#btn{
+	width: 100%;
+	background: none;
+	border: 5px solid blue;
+	color: black;
+	padding: 5px;
+	font-size: 30px;
+	cursor: pointer;
+	margin: 12px 0;
+	font-weight: bold;
+	color: black;
+}
+#passwordTextBox{
+	width: 100%;
+	background: none;
+	overflow: hidden;
+	font-size: 20px;
+	padding: 5px 0;
+	margin: 8px 0;
+	border: 5px solid blue;
+	font-weight: bold;
+}
+#divStyle{
+	width: 25%;
+    margin: 0 auto;
+    background: rgba(169, 169, 169, 0.5);
+	border-style: solid;
+	color: white;
+}
+#loginAlertText{
+	width: 100%;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.5);
+	border-style: solid;
+}
+#laikiuxEvent{
+	color:white;
+}
+
+table, th, td {
+    border: 1px solid black;
+}

@@ -1,0 +1,37 @@
+//insert data
+
+insert into useriai (prisoniecionickas, prisonieciopasswordas, prisoniecioip) VALUES ('Ufo', 'unizima', '88.121211')
+
+//select data
+
+select prisoniecionickas from useriai
+
+select * from useriai
+
+select * from useriai where prisoniecioip='8888'
+
+//delete data
+
+delete from useriai
+where prisoniecioip='8888'
+
+//order
+
+select * from useriai order by id asc
+
+//create table
+
+create table PAVADINIMAS (
+
+id int(11) not null PRIMARY KEY AUTO_INCREMENT,
+ip varchar(128) not null
+
+);
+
+.htacces display errors - php_value display_errors 1
+
+//update data
+
+update LaikiuxSubmission
+SET HasAnyoneWon='1'
+where id='1';
