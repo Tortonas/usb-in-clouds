@@ -9,4 +9,5 @@
 	$RandomSalt2 = "jhk654gh47"; //if you change it, passwords are going to change
 	$HostAvailableTill = "2018-11-02"; //displays end of host
 	$EnableRedirectionToHttps = false; //enable disable redirection to https
+	$EnableBackupFiles = true; //enable or disable saving files to backup_files folder (it needs 2x space)
 ?>

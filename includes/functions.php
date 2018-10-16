@@ -38,6 +38,20 @@
 		return $size;
 	}
 
+	function FindHowManySpaceBackupFilesTake()
+	{
+		$directory = "files";
+		$size = 0;
+		$directory = "backup_files";
+		//Algoritmas kuris randa kiek backup files užema vietos.
+		foreach (glob(rtrim($directory, '/').'/*', GLOB_NOSORT) as $each) 
+		{
+			$size += is_file($each) ? filesize($each) : folderSize($each);
+		}
+
+		return $size;
+	}
+
 	function CheckSessionLoggings()
 	{
 		require 'includes/mysql_login.php';

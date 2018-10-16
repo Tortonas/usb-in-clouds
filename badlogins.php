@@ -35,7 +35,7 @@ CheckSessionLoggings();
 	if(empty($_SESSION['status']))
 		$_SESSION['status'] = "user";
 
-	if($_SESSION['status'] == "admin" || $_SESSION['status'] == "superadmin")
+	if($_SESSION['status'] == "superadmin")
 	{
 		echo "Blogų prisijungimų sąrašas prie duomenų bazės<br><br>";
 		echo "<table align='center'>";

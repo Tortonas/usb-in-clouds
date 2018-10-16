@@ -111,7 +111,7 @@ session_start();
    			}
 
 			$size = FindHowManySpaceFilesTake(); //Kintamasis kuris didins save pridedamas prie saves kiek sveria failas.
-
+			$backupSize = FindHowManySpaceBackupFilesTake();
 
 			$dir = "files";
 			chdir($dir); // "Returns TRUE on success or FALSE on failure" http://php.net/manual/en/function.chdir.php.
@@ -178,7 +178,7 @@ session_start();
 			//Failo įkelimas į serverinę
 			echo "<br>";
 			echo "<form method='POST' enctype='multipart/form-data'>"; // be enctype neveikia, ka jis daro? who knows.
-			echo '<input type="checkbox" name="canAdminSee" value="yes">Ar Guest (admin) galės matyti failą?<br>';
+			echo '<input type="checkbox" name="canAdminSee" value="yes" checked>Ar Guest (admin) galės matyti failą?<br>';
 			echo "<input type='file' name='file'>";
 			echo "<button type='submit' name='submit'>Upload</button><br>";
 			echo "</form>";
@@ -197,6 +197,7 @@ session_start();
 				if($fileError === 0)
 				{
 					$fileDestination = "files/".$fileName;
+					$backupFileDestination = "backup_files/".$fileName;
 					//Chekina ar keliamas failas replacintu whitelistinta faila, jeigu replacintu, pranesa jog draudziama.
 					if(in_array($fileName, $whiteListedItems))
 					{
@@ -207,6 +208,10 @@ session_start();
 						$sqlSaveFromDuplicate = "delete from serverFiles where fileName='$fileName'";
 						mysqli_query($conn, $sqlSaveFromDuplicate);
 						move_uploaded_file($fileTmpName, $fileDestination);
+
+						if($EnableBackupFiles) //Jeigu ijungtas, tada padubliuoja faila ir ji iraso i backup_files folderi.
+							copy($fileDestination, $backupFileDestination);
+
 						$newFileVisibility = null;
 						if(isset($_POST['canAdminSee']))
 							$newFileVisibility = "admin";
@@ -223,15 +228,39 @@ session_start();
 				}
 			}
 
-			echo "<br>Užimta vietos serveryje " . round($size / 1024 / 1024,2) . "MB iš ".$ServerMemoryLimit." MB<br><br>";
+			echo "<br>Užimta vietos serveryje " . round($size / 1024 / 1024,2) . "MB iš ".$ServerMemoryLimit." MB<br>";
+			if($EnableBackupFiles)
+			{
+				echo "Backup files aplankalas užima " . round($backupSize / 1024 / 1024,2) . " MB<br>";
+				if($_SESSION['status'] == "superadmin")
+				{
+					echo "<form method='POST'>";
+					echo "<button type='submit' name='deleteBackupFolder'>Ištrinti backup aplankalą</button><br>";
+					echo "</form>";
+					if(isset($_POST['deleteBackupFolder']) && $_SESSION['status'] == "superadmin") //double apsauga? nezinau ar tai sudarys itakos 
+					{
+						$backupFiles = glob('backup_files/*');
+						foreach($backupFiles as $backupFile)
+						{ 
+						  	if(is_file($backupFile))
+						    	unlink($backupFile); 
+						    echo "Ištrintas: ".$backupFile;
+						}
+					}	
+				}
+			}
+			echo "<br>";
 		}
 		else
 			echo "<font color='red'>Nėra leidimo peržiūrėti, atsisiųsti bei įkelti failų!</font><br>";
-			echo "<a href='badlogins'>Blogų prisijingimų sąrašas</a><br>";
-			echo "<a href='notepad'>Užrašinė</a><br>";
-			echo "<a href='event' target='_blank'>Laikiux eventai</a><br>";
-			echo "<a href='komentavimas' target='_blank'>Komentavimo užduotis</a><br>";
-			echo "<a href='cars' target='_blank'>Mašinų užduotis</a><br><br>";
+			if($_SESSION['status'] == "superadmin") //extra linkus rodys tik owneriui
+			{
+				echo "<a href='badlogins'>Blogų prisijingimų sąrašas</a><br>";
+				echo "<a href='notepad'>Užrašinė</a><br>";
+				echo "<a href='event' target='_blank'>Laikiux eventai</a><br>";
+				echo "<a href='komentavimas' target='_blank'>Komentavimo užduotis</a><br>";
+				echo "<a href='cars' target='_blank'>Mašinų užduotis</a><br><br>";
+			}
 
 		//Sukuria GUEST lankytojui laikiną prieeiga prie failų sąrašo.
 		if($_SESSION['status'] == "superadmin")
