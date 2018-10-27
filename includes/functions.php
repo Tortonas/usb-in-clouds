@@ -78,6 +78,18 @@
 				}
 			}
 		}
+	}
 
+	function AddToLogs($logText)
+	{
+		$Today = date("Y-m-d H:i:s");
+
+		require 'includes/mysql_login.php';
+		//insert into useriai (prisoniecionickas, prisonieciopasswordas, prisoniecioip) VALUES ('Ufo', 'unizima', '88.121211')
+		$sqlInsertToLogs = "insert into serverLogs (log, date) VALUES('$logText', '$Today')";
+		if(mysqli_query($conn, $sqlInsertToLogs))
+			return true;
+		else
+			return false;
 	}
 ?>
