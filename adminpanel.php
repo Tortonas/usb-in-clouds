@@ -163,11 +163,17 @@ session_start();
 							$path = "files/".$entry;
 							unlink($path);
 							$sqlDeleteFileFromDb = "delete from serverFiles where fileName='$entry'";
+							//Logu struktura: "User (IP) did ..."
+							$logText = $_SESSION['nick']." deleted a file (".$entry.") from the server";
+							AddToLogs($logText);
 							mysqli_query($conn, $sqlDeleteFileFromDb);
 							header("Refresh:0");
 						}
 						else
 						{
+							//Logu struktura: "User (IP) did ..."
+							$logText = $_SESSION['nick']." tried to delete file (".$entry.")";
+							AddToLogs($logText);
 							echo "<font color='red'>Nėra privilegijos trinti failus!</font><br>";
 						}
 					}
@@ -219,6 +225,9 @@ session_start();
 							$newFileVisibility = "superadmin";
 						$sqlInsertFileNameToDb = "insert into serverFiles (fileName, fileVisibility) VALUES ('$fileName', '$newFileVisibility')";
 						mysqli_query($conn, $sqlInsertFileNameToDb);
+						//Logu struktura: "User (IP) did ..."
+						$logText = $_SESSION['nick']." uploaded a file (".$fileName.") into the server";
+						AddToLogs($logText);
 						header('Location: /adminpanel');
 					}
 				}
@@ -246,6 +255,9 @@ session_start();
 						    	unlink($backupFile); 
 						    echo "Ištrintas: ".$backupFile;
 						}
+						//Logu struktura: "User (IP) did ..."
+						$logText = $_SESSION['nick']." just deleted backup files";
+						AddToLogs($logText);
 					}	
 				}
 			}
@@ -255,8 +267,9 @@ session_start();
 			echo "<font color='red'>Nėra leidimo peržiūrėti, atsisiųsti bei įkelti failų!</font><br>";
 			if($_SESSION['status'] == "superadmin") //extra linkus rodys tik owneriui
 			{
+				echo "<a href='logs'>Logai</a><br>";
 				echo "<a href='badlogins'>Blogų prisijingimų sąrašas</a><br>";
-				echo "<a href='notepad'>Užrašinė</a><br>";
+				echo "<a href='notepad'>Užrašinė (trash, atsinaujint reiktu)</a><br>";
 				echo "<a href='event' target='_blank'>Laikiux eventai</a><br>";
 				echo "<a href='komentavimas' target='_blank'>Komentavimo užduotis</a><br>";
 				echo "<a href='cars' target='_blank'>Mašinų užduotis</a><br><br>";
@@ -281,6 +294,9 @@ session_start();
 					$sqlSetGuestPermissions = "update serverAdmins set accesTill='$newAccesTillDate' where status='admin'";
 					mysqli_query($conn, $sqlSetGuestPermissions);
 					echo "Uždėtos privilegijos iki: ".$newAccesTillDate."<br>";
+					//Logu struktura: "User (IP) did ..."
+					$logText = $_SESSION['nick']." gave permissions to admin accounts till ".$newAccesTillDate;
+					AddToLogs($logText);
 				}
 				else
 					echo "<font color='red'>Problemos su įvestimi!</font><br>";

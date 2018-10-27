@@ -166,18 +166,28 @@ session_start();
 						{
 							$newBanDate = date("Y-m-d H:i:s", strtotime($currentTime.'+ '.$BanLength.' minutes'));
 							$sqlUpdate = "update serverBadLogins SET tries='$tries', bannedTill='$newBanDate', lastLogin='$currentTime' where ip='$userIP'";
+							//Logu struktura: "User (IP) did ..."
+							$logText = "User (".$userIP.") just got banned until ".$newBanDate;
+							AddToLogs($logText);
 							echo "<font color='red' size='5'><b>You have been banned!</b></font><br>";
 						}
 						else
+						{
+							//Logu struktura: "User (IP) did ..."
+							$logText = "User (".$userIP.") tried to connect with incorrect logins into system. He used his ".$tries." tries";
+							AddToLogs($logText);
 							$sqlUpdate = "update serverBadLogins SET tries='$tries', lastLogin='$currentTime' where ip='$userIP'";
+						}
 						mysqli_query($conn, $sqlUpdate);
 					}
 					else
 					{
 						$sqlInsert = "insert into serverBadLogins(ip, tries, lastLogin) VALUES ('$userIP','$tries', '$currentTime')";
 						mysqli_query($conn, $sqlInsert);
+						//Logu struktura: "User (IP) did ..."
+						$logText = "User (".$userIP.") tried to connect with incorrect logins into system. He used his ".$tries." tries";
+						AddToLogs($logText);
 					}
-					mysqli_close($conn);
 					echo "<font color='red' size='5'><b>You weren't connected to the system. You used $tries of ".$MaximumTriesWhileLogging." attempts."."</b></font><br>";
 					$_SESSION['status'] = "user";
 					$_SESSION['nick'] = "unlogged";
@@ -185,12 +195,16 @@ session_start();
 				else
 				{
 					echo "<font color='red' size='5'><b>You didn't write any data</b></font><br>";
+					//Logu struktura: "User (IP) did ..."
+					$logText = "User (".$userIP.") tried to connect without writing any data";
+					AddToLogs($logText);
 					$_SESSION['status'] = "user";
 					$_SESSION['nick'] = "unlogged";
 				}
 			}
 		}
 		echo "</div>";
+		mysqli_close($conn);
 	}
 ?>
 
