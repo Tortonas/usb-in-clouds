@@ -14,13 +14,10 @@ session_start();
 ?>
 
 <link rel="icon" href="favicon.png" type="image/png" sizes="16x16">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="/stylesheet.css" type="text/css" rel="stylesheet" />
 
 <?php
-	if(IsThisMobileDevice()) //functions.php
-		echo '<link href="/stylesheet-mobile.css" type="text/css" rel="stylesheet" />';
-	else
-		echo '<link href="/stylesheet.css" type="text/css" rel="stylesheet" />';
-
 	if($EnableRedirectionToHttps)
 	{
 		require 'includes/redirect_to_https.html';
@@ -30,7 +27,9 @@ session_start();
 
 </head>
 
-<body>
+<body background="background.png">
+
+<div class="container">
 
 	<form method="POST" id="loginform">
 
@@ -57,6 +56,10 @@ session_start();
 	banned - bit
 	*/
 	CheckSessionLoggings();
+	// if(!isset($_SESSION['status']))
+	// {
+	// 	$_SESSION['status'] = null;
+	// }
 	if($_SESSION['status'] == "admin" || $_SESSION['status'] == "superadmin")
 	{
 		echo "<meta http-equiv='refresh' content='1; url=".$WebDomain."/adminpanel' />";
@@ -209,6 +212,8 @@ session_start();
 ?>
 
 </form>
+
+</div>
 
 </body>
 

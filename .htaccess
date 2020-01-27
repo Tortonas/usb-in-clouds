@@ -1,0 +1,18 @@
+RewriteEngine On
+
+#redirect to a page without .php end
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [L]
+
+#display php errors/warnings in website
+php_value display_errors 1
+
+#nepamenu
+RewriteCond %{HTTP_HOST} ^subdomain\. [NC]
+RewriteCond %{REQUEST_URI} !^/folder/ [NC]
+RewriteRule ^ folder%{REQUEST_URI} [NE,L]
+
+#nepamenu
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [L]

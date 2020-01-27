@@ -12,12 +12,8 @@ session_start()
 	echo "<title>".$WebsiteTitle."</title>"
 ?>
 <link rel="icon" href="favicon.png" type="image/png" sizes="16x16">
-<?php
-	if(IsThisMobileDevice()) //functions.php
-		echo '<link href="/stylesheet-mobile.css" type="text/css" rel="stylesheet" />';
-	else
-		echo '<link href="/stylesheet.css" type="text/css" rel="stylesheet" />';
-?>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link href="/stylesheet.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body background="background.png">

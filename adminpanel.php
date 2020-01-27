@@ -12,11 +12,8 @@ session_start();
 	echo "<title>".$WebsiteTitle."</title>"
 ?>
 <link rel="icon" href="favicon.png" type="image/png" sizes="16x16">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <?php
-	if(IsThisMobileDevice()) //functions.php
-		echo '<link href="/stylesheet-mobile.css" type="text/css" rel="stylesheet" />';
-	else
-		echo '<link href="/stylesheet.css" type="text/css" rel="stylesheet" />';
 
 	if($EnableRedirectionToHttps)
 	{
@@ -27,7 +24,7 @@ session_start();
 
 <body background="background.png">
 
-<div id="divStyle">
+<div class="container">
 <?php
 	if(isset($_POST['logout']))
 	{
@@ -60,19 +57,21 @@ session_start();
 	if($_SESSION['status'] == "admin" || $_SESSION['status'] == "superadmin")
 	{
 		echo '<form method="post">';
-		echo '<button type="submit" name="logout">Atsijungti</button><br>';
+
+		echo '<div class="mx-auto text-center"> <button class="btn btn-danger mx-auto" type="submit" name="logout">Atsijungti</button></div>';
 		echo '</form>';
 
-		echo "<br>Prisijungęs kaip <b>".$_SESSION['nick']."</b><br><br>";
+		echo '<br><div class="card bg-info mx-auto p-3" style="width: 35rem;>
+  <div class="card-body text-center">Prisijungęs kaip <b>'.$_SESSION['nick'].'</b></div></div>
+</div><br>';
 
-		
-		echo "Failų sąrašas:<br>";
+	
 
 		//Chekina ar yra prieeiga prie failų peržiūros, atsisiuntimo bei įkelimo.
 		
 		if($_SESSION['status'] == "superadmin" || $AccesTill > $Today)
 		{
-			//Turbūt įrašo direktorijos failus į masyvą
+			//Atidaro direktoriją
 			$resource = opendir("files");
 			//Skaito direktorija
 			$entryIndex = 0;
@@ -120,7 +119,8 @@ session_start();
 			chdir($dir); //Atstato pagrindine direktorija atgal i public_html
 
 			
-
+			echo '<div class="card mx-auto bg-info" style="width: 30rem;">Failų sąrašas<ul class="list-group bg-info">';
+		
 			foreach ($filesArray as $entry)
 			{
 				//Failu matomumas pagal matomumo flaga.
@@ -145,14 +145,15 @@ session_start();
 				if($doIPrintThisFileToUser)
 				{
 					$entryIndexString = "file".$entryIndex;
+					echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
 					echo "<form method='post'>";
 					echo '<a href="files/'.$entry.'">'.$entry.'</a> ';
 					//Chekina ar item yra whiteliste, jeigu ne, padaro mygtuka, jeigu yra, tada nepaspaudziama X.
 					if(in_array($entry, $whiteListedItems))
-						echo "<font color='pink'>X</font>";
+						echo "<button type='submit' class='btn btn-sm btn-danger' name='".$entryIndexString."' disabled>X</button><br>";
 					else	
-						echo "<button type='submit' name='".$entryIndexString."'>X</button><br>";
-					
+						echo "<button type='submit' class='btn btn-sm btn-danger' name='".$entryIndexString."'>X</button><br>";
+						//echo '<span class="badge badge-primary badge-pill"><button name="changerole12" class="btn btn-primary btn-sm">Patvirtintas</button></span>';
 					echo "</form>";
 					// Failo trinimas
 					if(isset($_POST[$entryIndexString]))
@@ -178,21 +179,26 @@ session_start();
 						}
 					}
 					$entryIndex++;
+					echo '</li>';
 				}
+			
 			}
+			echo '</ul></div>';
 			
 			//Failo įkelimas į serverinę
 			echo "<br>";
-			echo "<form method='POST' enctype='multipart/form-data'>"; // be enctype neveikia, ka jis daro? who knows.
+			echo '<div class="card mx-auto p-3 bg-info" style="width: 35rem;>
+				  <div class="card-body mx-auto">';
+			echo "<form method='POST' enctype='multipart/form-data'>"; // be enctype neveikia
 			echo '<input type="checkbox" name="canAdminSee" value="yes" checked>Ar Guest (admin) galės matyti failą?<br>';
 			echo "<input type='file' name='file'>";
 			echo "<button type='submit' name='submit'>Upload</button><br>";
-			echo "</form>";
+			echo "</form></div></div>";
 
 			//Logika vykdoma po UPLOAD paspaudimo
 			if (isset($_POST['submit']))
 			{
-
+				ini_set('upload_max_filesize', '10M');
 				$file = $_FILES['file'];
 				$fileName = $_FILES['file']['name'];
 				$fileTmpName = $_FILES['file']['tmp_name'];
@@ -234,9 +240,12 @@ session_start();
 				else
 				{
 					echo "<font color='red'>Error įkeliant failą.</font><br>";
+					echo $_FILES['file']['error'];
 				}
 			}
 
+			echo '<div class="card mx-auto p-3 bg-info" style="width: 35rem;>
+			  <div class="card-body mx-auto">';
 			echo "<br>Užimta vietos serveryje " . round($size / 1024 / 1024,2) . "MB iš ".$ServerMemoryLimit." MB<br>";
 			if($EnableBackupFiles)
 			{
@@ -244,7 +253,7 @@ session_start();
 				if($_SESSION['status'] == "superadmin")
 				{
 					echo "<form method='POST'>";
-					echo "<button type='submit' name='deleteBackupFolder'>Ištrinti backup aplankalą</button><br>";
+					echo "<button type='submit' class='btn btn-danger' name='deleteBackupFolder'>Ištrinti backup aplankalą</button><br>";
 					echo "</form>";
 					if(isset($_POST['deleteBackupFolder']) && $_SESSION['status'] == "superadmin") //double apsauga? nezinau ar tai sudarys itakos 
 					{
@@ -269,10 +278,6 @@ session_start();
 			{
 				echo "<a href='logs'>Logai</a><br>";
 				echo "<a href='badlogins'>Blogų prisijingimų sąrašas</a><br>";
-				echo "<a href='notepad'>Užrašinė (trash, atsinaujint reiktu)</a><br>";
-				echo "<a href='event' target='_blank'>Laikiux eventai</a><br>";
-				echo "<a href='komentavimas' target='_blank'>Komentavimo užduotis</a><br>";
-				echo "<a href='cars' target='_blank'>Mašinų užduotis</a><br><br>";
 			}
 
 		//Sukuria GUEST lankytojui laikiną prieeiga prie failų sąrašo.
@@ -282,7 +287,7 @@ session_start();
 			echo "<br>";
 			echo "<form method='POST'>";
 			echo "<input type='text' name='permissionMinutes' placeholder='Laikas minutemis' value='5'><br>";
-			echo "<button type='submit' name='submitPermissions'>Privilegijos admin lankytojams</button><br><br>";
+			echo "<button type='submit' class='btn btn-success' name='submitPermissions'>Privilegijos admin lankytojams</button><br><br>";
 			echo "</form>";
 			if(isset($_POST['submitPermissions']))
 			{
@@ -302,6 +307,8 @@ session_start();
 					echo "<font color='red'>Problemos su įvestimi!</font><br>";
 			}
 		}
+		
+		echo '</div></div>';
 
 		mysqli_close($conn);
 	}
